@@ -20,16 +20,19 @@ app.get('/',function(req,res){
 res.render('index.html');
 });
 
-app.get('/search',function(req,res){
-connection.query('SELECT first_name from user_name where first_name like "%'+req.query.key+'%"', function(err, rows, fields) {
-	  if (err) throw err;
-    var data=[];
-    for(i=0;i<rows.length;i++)
-      {
-        data.push(rows[i].first_name);
+app.get('/search', function (req, res) {
+  const key = `%${req.query.key}%`;
+  connection.query(
+    'SELECT first_name FROM user_name WHERE first_name LIKE ?',
+    [key],
+    function (err, rows) {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
       }
-      res.end(JSON.stringify(data));
-	});
+    const data = rows.map(r => r.first_name);
+    res.json(data);
+    }  
+  );
 });
 
 var server=app.listen(3000,function(){
