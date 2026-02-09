@@ -52,10 +52,26 @@ app.get('/',function(req,res){
 // search function    
 app.get('/search',function(req,res){
   //db.query('SELECT album.albumTitle, song.songTitle FROM album, song WHERE album.albumTitle OR song.songTitle LIKE "%'+req.query.key+'%"'
-    db.query('SELECT artist.artistName,song.songTitle, album.albumTitle FROM artist JOIN artist_has_song ahs ON artist.idArtist = ahs.Artist_idArtist JOIN song ON ahs.song_idSong = song.idSong JOIN artist_has_album aha ON artist.idArtist = aha.Artist_idArtist JOIN album ON aha.Album_idAlbum = album.idAlbum WHERE artist.artistName LIKE "%'+req.query.key+'%"', function(err, rows, fields) {
-        if (err) throw err;
-        //console.log(rows);
-        var data=[];
+    const searchKey = req.query.key;
+    const key = `%${searchKey}%`;
+
+    const sql = `
+    SELECT artist.artistName, song.songTitle, album.albumTitle
+    FROM artist
+    JOIN artist_has_song ahs ON artist.idArtist = ahs.Artist_idArtist
+    JOIN song ON ahs.song_idSong = song.idSong
+    JOIN artist_has_album aha ON artist.idArtist = aha.Artist_idArtist
+    JOIN album ON aha.Album_idAlbum = album.idAlbum
+    WHERE artist.artistName LIKE ?
+  `;
+
+    db.query(sql, [key], (err, rows, fields) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    var data=[];
         for(i=0;i<rows.length;i++)
             {
             data.push(rows[i].artistName+ " " +rows[i].songTitle);
@@ -66,7 +82,8 @@ app.get('/search',function(req,res){
             }
             res.end(JSON.stringify(data));
         });
-  });
+});
+
 
 //user registration
 app.post('/register',(req,res,next)=>{
