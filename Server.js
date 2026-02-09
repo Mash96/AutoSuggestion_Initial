@@ -2,11 +2,14 @@ var express=require('express');
 var app=express();
 var  mysql=require('mysql');
 
+require('dotenv').config(); // load env vars
+
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'newdb'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306
 });
 
 connection.connect();
