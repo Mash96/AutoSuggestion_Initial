@@ -1,9 +1,9 @@
 {
   "name": "AutoSuggest-Component",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "dependencies": {
-    "express": "~4.6.1",
-    "ejs": "~1.0.0",
-    "mysql": "~2.4.1"
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "mysql2": "^3.9.0"
   }
 }
